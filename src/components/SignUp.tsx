@@ -1,18 +1,34 @@
-import React, { useState, useEffect } from "react";
-import validate from "./validate";
-import { useForm } from "@formspree/react";
-import { notify } from "./toas";
-import { motion as m } from "framer-motion";
-import { Link } from "react-router-dom";
-
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const SignUp = () => {
+import { useForm } from "@formspree/react";
+import { motion as m } from "framer-motion";
+import React, {
+  ChangeEvent,
+  FocusEvent,
+  FormEvent,
+  useEffect,
+  useState,
+} from "react";
+import { Link } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+
+import { notify } from "./toas";
+import validate, { Data, Errors } from "./validate";
+
+const SignUp: React.FC = () => {
   const [formData, handleSubmit] = useForm("mbjeeydl");
-  const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
-  const [data, setData] = useState({
+  const [errors, setErrors] = useState<Errors>({});
+  type DataKeys = keyof Data;
+  const initialTouchedState: Record<DataKeys, boolean> = {
+    email: false,
+    name: false,
+    password: false,
+    confirmPassword: false,
+    isAccepted: false,
+  };
+  const [touched, setTouched] =
+    useState<Record<DataKeys, boolean>>(initialTouchedState);
+  const [data, setData] = useState<Data>({
     name: "",
     email: "",
     password: "",
@@ -20,13 +36,13 @@ const SignUp = () => {
     isAccepted: false,
   });
 
-  const changeHandler = (event) => {
+  const changeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.name === "accept")
       setData({ ...data, isAccepted: event.target.checked });
     else setData({ ...data, [event.target.name]: event.target.value });
   };
 
-  const touchHandler = (event) => {
+  const touchHandler = (event: FocusEvent<HTMLInputElement>) => {
     setTouched({ ...touched, [event.target.name]: true });
   };
 
@@ -35,7 +51,7 @@ const SignUp = () => {
     // console.log(errors);
   }, [data]);
 
-  const onSubmitHandler = (event) => {
+  const onSubmitHandler = (event: FormEvent) => {
     event.preventDefault();
 
     setTouched({
@@ -48,7 +64,7 @@ const SignUp = () => {
 
     if (Object.values(errors).length) {
       Object.values(errors).forEach((error) => {
-        notify(error);
+        notify(error as string, "error");
       });
     } else {
       notify("Yes! Welcome to your account:)", "success");
@@ -78,7 +94,7 @@ const SignUp = () => {
             value={data.name}
             onChange={(event) => changeHandler(event)}
           />
-          {errors.name && touched.name && (
+          {errors.name && touched!.name && (
             <m.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -103,7 +119,7 @@ const SignUp = () => {
             value={data.email}
             onChange={(event) => changeHandler(event)}
           />
-          {errors.email && touched.email && (
+          {errors.email && touched?.email && (
             <m.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -127,7 +143,7 @@ const SignUp = () => {
             onChange={(event) => changeHandler(event)}
             value={data.password}
           />
-          {errors.password && touched.password && (
+          {errors.password && touched?.password && (
             <m.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -151,7 +167,7 @@ const SignUp = () => {
             value={data.confirmPassword}
             onChange={(event) => changeHandler(event)}
           />
-          {errors.confirmPassword && touched.confirmPassword && (
+          {errors.confirmPassword && touched?.confirmPassword && (
             <m.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -178,7 +194,7 @@ const SignUp = () => {
               I accept the agreement
             </label>
           </div>
-          {errors.isAccepted && touched.isAccepted && (
+          {errors.isAccepted && touched?.isAccepted && (
             <m.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}

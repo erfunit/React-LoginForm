@@ -1,7 +1,25 @@
-const validate = (data, type) => {
-  const errors = {};
+export interface Data {
+  email?: string;
+  name?: string;
+  password?: string;
+  confirmPassword?: string;
+  isAccepted?: boolean;
+}
 
-  //validate email
+type FormType = "signup" | "login";
+
+export interface Errors {
+  email?: string;
+  name?: string;
+  password?: string;
+  confirmPassword?: string;
+  isAccepted?: string;
+}
+
+const validate = (data: Data, type: FormType): Errors => {
+  const errors: Errors = {};
+
+  // validate email
   if (!data.email) {
     errors.email = "email is required!";
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
@@ -11,14 +29,14 @@ const validate = (data, type) => {
   }
 
   if (type === "signup") {
-    //validated name
-    if (!data.name.trim()) {
+    // validated name
+    if (!data.name?.trim()) {
       errors.name = "name is required!";
     } else {
       delete errors.name;
     }
 
-    //validate confirm password
+    // validate confirm password
     if (!data.confirmPassword) {
       errors.confirmPassword = "you must confirm your password!";
     } else if (data.confirmPassword !== data.password) {
@@ -32,7 +50,8 @@ const validate = (data, type) => {
     } else {
       delete errors.isAccepted;
     }
-    //validate password
+
+    // validate password
     if (!data.password) {
       errors.password = "password is required!";
     } else if (data.password.length < 8) {
@@ -41,7 +60,7 @@ const validate = (data, type) => {
       delete errors.password;
     }
   } else {
-    //validate password
+    // validate password
     if (!data.password) {
       errors.password = "password is required!";
     } else {

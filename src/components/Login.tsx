@@ -1,38 +1,50 @@
-import React, { useState, useEffect } from "react";
-import validate from "./validate";
-import { useForm } from "@formspree/react";
-import { notify } from "./toas";
-import { motion as m } from "framer-motion";
-import { Link } from "react-router-dom";
-
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const Login = () => {
+import { useForm } from "@formspree/react";
+import { motion as m } from "framer-motion";
+import React, { ChangeEvent, FocusEvent, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+
+import { notify } from "./toas";
+import validate from "./validate";
+
+interface Data {
+  email?: string;
+  password?: string;
+}
+
+type DataKeys = keyof Data;
+type Errors = Partial<Record<DataKeys, string>>;
+
+const initialTouchedState: Record<DataKeys, boolean> = {
+  email: false,
+  password: false,
+};
+
+const Login: React.FC = () => {
   const [formData, handleSubmit] = useForm("mbjeeydl");
-  const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
-  const [data, setData] = useState({
+  const [errors, setErrors] = useState<Errors>({});
+  const [touched, setTouched] =
+    useState<Record<DataKeys, boolean>>(initialTouchedState);
+  const [data, setData] = useState<Data>({
     email: "",
     password: "",
   });
 
-  const changeHandler = (event) => {
-    if (event.target.name === "accept")
-      setData({ ...data, isAccepted: event.target.checked });
-    else setData({ ...data, [event.target.name]: event.target.value });
+  const changeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    setData({ ...data, [event.target.name as DataKeys]: event.target.value });
   };
 
-  const touchHandler = (event) => {
-    setTouched({ ...touched, [event.target.name]: true });
+  const touchHandler = (event: FocusEvent<HTMLInputElement>) => {
+    setTouched({ ...touched, [event.target.name as DataKeys]: true });
   };
 
   useEffect(() => {
     setErrors(validate(data, "login"));
-    // console.log(errors);
   }, [data]);
 
-  const onSubmitHandler = (event) => {
+  const onSubmitHandler = (event: React.FormEvent) => {
     event.preventDefault();
 
     setTouched({
@@ -42,7 +54,7 @@ const Login = () => {
 
     if (Object.values(errors).length) {
       Object.values(errors).forEach((error) => {
-        notify(error);
+        notify(error, "error");
       });
     } else {
       notify("Yes! Welcome to your account:)", "success");

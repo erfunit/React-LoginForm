@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 
-export const notify = (text, type) => {
+export const notify = (text: string, type: "success" | "error"): void => {
   if (type === "success") {
     toast.success(text, {
       position: "top-left",
@@ -12,7 +12,7 @@ export const notify = (text, type) => {
       progress: undefined,
       theme: "colored",
     });
-  } else {
+  } else if (type === "error") {
     toast.error(text, {
       position: "top-left",
       autoClose: 5000,

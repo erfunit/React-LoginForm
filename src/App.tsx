@@ -1,9 +1,10 @@
-import React from "react";
-import SignUp from "./components/SignUP";
-import { Routes, Route } from "react-router-dom";
-import Login from "./components/Login";
+import React, { FC } from "react";
+import { Route, Routes } from "react-router-dom";
 
-const App = () => {
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
+
+const App: FC = () => {
   return (
     <div className="h-screen w-screen bg-slate-100 flex justify-center items-center px-5">
       <Routes>
